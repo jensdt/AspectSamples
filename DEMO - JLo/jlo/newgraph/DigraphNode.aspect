@@ -1,0 +1,40 @@
+package jlo.newgraph;
+
+import java.util.Set;
+import java.util.HashSet;
+
+public abstract class DigraphNode<T> {
+
+  public abstract T object();
+	
+  protected abstract Set<DigraphNode<T>> directSuccessorNodes();
+  
+  public Set<T> directSuccessors() {  	Set<T> result = new HashSet<T>();
+  	for(DigraphNode<T> succ: directSuccessorNodes()) {  		result.add(succ.object());  	}
+  	return result;  }
+	
+//  public Set<T> directSuccessors() {
+//  	return directSuccessors(object());
+//  }
+
+  public Set<T> successors() {
+    Set<T> result = new HashSet<T>();
+  	accumulateSuccessors(object(), result);
+    return result; 
+  }
+  
+  private void accumulateSuccessors(T t, Set<T> accumulator) {
+    Set<T> outs = directSuccessors(t);
+    for(T newT: outs) {
+      if(! accumulator.contains(newT)) {
+  	    accumulator.add(newT);
+  	    accumulateSuccessors(newT, accumulator);
+      }
+    }
+  }
+
+  public boolean predecessorOf(T t) {
+  	return successors().contains(t);
+  }
+  
+}

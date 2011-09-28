@@ -1,0 +1,55 @@
+package jlo.association;
+
+import java.util.List;
+import java.util.ArrayList;
+
+public class Property<T extends Object> implements SingleAssociationEnd<T> {  
+  /**
+   * Create a new property with its value set to the given value.
+   */     
+  public Property(T value) {
+    setValue(value);
+  }
+
+  /**
+   * Constructor for setting the value directly instead of using the setter.
+   * Only use if you ensure that the additionaly actions of the setter are performed
+   * as well.
+   */
+  protected Property(T value, boolean notUsed) {
+    _value = value;
+  }
+        
+  private T _value;
+
+  /**
+   * Set the value of this property.
+   */	
+  public void setValue(T value) {    _value = value;  }
+  
+  /**
+   * Return the value of this property.
+   */
+  public T getValue() {
+	return _value; 
+  }
+  
+  
+  // DEBUG
+  public T getValueWithParam(T param) {
+  	return _value;
+  }
+  
+  /**
+   * The other end of the unidirectional association represented by a property is
+   * its value.
+   */
+  public T getOtherEnd() {
+	return _value; 
+  }
+  
+  public List<T> getObjects() {  	List<T> result = new ArrayList<T>();
+  	T value = getValue();
+  	if(value != null) {  		result.add(value);  	}
+  	return result;  }
+}

@@ -1,0 +1,7 @@
+package logging;
+
+public class AspectConfiguration {
+	public static boolean ENABLE_EXCEPTION = false;
+	public static boolean ENABLE_REASSIGN = false;
+	public static boolean ENABLE_OVERFLOW = false;		
+}

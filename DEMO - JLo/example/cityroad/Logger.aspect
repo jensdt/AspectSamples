@@ -1,0 +1,23 @@
+package example.cityroad;
+import jlo.association.*;
+
+aspect Logger {
+	pointcut methodInvocationOnSubobj() : call(String jlo.association.Property.getValue());
+	
+	before_() : methodInvocationOnSubobj() {
+		System.out.println("Calling getValue");
+	}
+	
+	pointcut methodInvocation(City from, City to) : call(boolean example.cityroad.City.canReach(City))
+												&& arguments(to) && targetType(from);
+															
+	before_(City from, City to) : methodInvocation(from, to) {
+		System.out.println("Checking canReach: " + from + " to " + to);
+	}
+	
+	pointcut subobjRead(City c) : subobjectRead(Property<Integer> example.cityroad.City.inhabitants) && targetType(c);
+	
+	before_(City c) : subobjRead(c) {
+		c.inhabitants.setValue(new Integer(95000));
+	}
+}

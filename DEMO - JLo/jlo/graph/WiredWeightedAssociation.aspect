@@ -1,0 +1,28 @@
+package jlo.graph;
+
+import jlo.association.AssociationEnd;
+import jlo.association.Property;
+import java.util.List;
+import java.util.ArrayList;
+
+public class WiredWeightedAssociationEnd<V,E> implements WeightedAssociationEnd<V,E> {	
+	connector edge V -> AssociationEnd<E>;
+	connector weightedEdge E -> WiredWeightedEdge<V,E>;
+	
+	public WiredWeightedAssociationEnd(V v) {		subobject.object(v);	}
+	
+	public subobject Property<V> object {		export getValue() as object();	}
+	
+	public List<V> getObjects() {		List<E> edgeNodes = #edge(object()).getObjects();
+		List<V> result = new ArrayList<V>();
+		for(E e: edgeNodes) {			WiredWeightedEdge<V,E> edge = #weightedEdge(e);
+			result.add(edge.otherEnd(object(),e));		}
+		return result;	}
+	
+	public Double weight(E e) {
+		return #weightedEdge(e).weight(e);	}
+	
+	public V otherEnd(V v, E e) {		return #weightedEdge(e).otherEnd(v,e);
+	}
+	
+	public List<E> edges() {		return #edge(object()).getObjects();	}}

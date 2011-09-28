@@ -1,0 +1,33 @@
+package jlo.graph;
+
+import jlo.function.Function;
+import jlo.association.AssociationEnd;
+import jlo.association.Property;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Set;
+import java.util.HashSet;
+
+
+public class WiredDigraphNode<T> extends DigraphNode<T> {
+
+  connector connections T -> [AssociationEnd<T>];
+
+  public WiredDigraphNode(T t) {  	subobject.object(t);
+  }
+
+  public subobject Property<T> object {  	export getValue() as getObject();  }
+  
+  public T object() {    //return object.super.getValue();
+    return getObject();
+  }
+  protected Set<T> directSuccessors(T t) {
+  	List<? extends AssociationEnd<T>> links = #connections(t);
+  	Set<T> result = new HashSet<T>();
+  	for(AssociationEnd<T> link:links) {
+  	  result.addAll(link.getObjects());
+  	}
+  	return result;
+  }
+
+}

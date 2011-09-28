@@ -1,0 +1,20 @@
+package jlo.event;
+
+import java.util.List;
+import jlo.association.MultiProperty;
+
+public abstract class AbstractSubject<O> implements Subject<O> {	
+	public AbstractSubject() {			}
+	
+	private subobject MultiProperty<O> observers;
+	
+	public synchronized void addObserver(O observer) {
+	    observers.add(observer);	}
+	
+	public synchronized void removeObserver(O observer) {		observers.remove(observer);	}
+	
+	public synchronized List<O> observers() {		return observers.getObjects();	}
+
+	public synchronized void notifyObservers() {		for(O observer: observers()) {			notifyObserver(observer);		}	}
+	
+	public abstract void notifyObserver(O observer);}

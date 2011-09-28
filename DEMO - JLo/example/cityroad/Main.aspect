@@ -1,0 +1,61 @@
+package example.cityroad;
+
+public class Main {
+	
+	public static void main(String[] args) {
+		City leuven = new City("Leuven");
+		City lille = new City("Lille");
+		City brussels = new City("Brussels");
+		City antwerp = new City("Antwerp");
+		City dendermonde = new City("Dendermonde");
+		City mechelen = new City("Mechelen");
+		City lokeren = new City("Lokeren");
+		City liege = new City("Liege");
+		City namur = new City("Namur");
+		City charleroi = new City("Charleroi");
+		City ghent = new City("Ghent");
+		City ninove = new City("Ninove");
+		City oudenaarde = new City("Oudenaarde");
+		City kortrijk = new City("Kortrijk");
+		new Road(16d,brussels,leuven);
+		new Road(40d,leuven,liege);
+		new Road(40d,leuven,namur);
+		new Road(30d,leuven,mechelen);
+		new Road(25d,liege,namur);
+		new Road(10d,brussels,mechelen);
+		new Road(25d,brussels,dendermonde);
+		new Road(20d,brussels,ghent);
+		new Road(20d,brussels,ninove);
+		new Road(50d,brussels,lille);
+		new Road(30d,brussels,charleroi);
+		new Road(25d,namur,charleroi);
+		new Road(60d,lille,charleroi);
+		new Road(35d,oudenaarde,ninove);
+		new Road(25d,oudenaarde,ghent);
+		new Road(30d,oudenaarde,kortrijk);
+		new Road(15d,lille,kortrijk);
+		new Road(25d,ghent,kortrijk);
+		new Road(10d,ghent,lokeren);
+		new Road(30d,antwerp,lokeren);
+		new Road(15d,dendermonde,lokeren);
+		Road r = new Road(10d,antwerp,mechelen);
+		System.out.println("Name: " + leuven.name.getValue());
+		System.out.println("Inhabitants: " + leuven.inhabitants.getValue());
+		massert(((double) r.length()) == 10d);
+		massert(leuven.canReach(lille));
+		massert(lille.canReach(leuven));
+		massert(leuven.distanceTo(lille) == 66d);
+		massert(antwerp.distanceTo(liege) == 76d);
+		massert(lille.distanceTo(liege) == 106d);
+		massert(brussels.distanceTo(oudenaarde) == 45d);
+		massert(lokeren.distanceTo(ninove) == 50d);
+		System.out.println("Tests succeeded.");
+	}
+	
+   public static void massert(boolean bool) {
+   	  if(!bool) {
+   	  	throw new Error();
+   	  }
+   }
+	
+}

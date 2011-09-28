@@ -1,0 +1,14 @@
+package jlo.tuple;
+
+import jlo.association.Property;
+
+public class Pair<L,R> {	
+	public Pair(L l, R r) {		subobject.left(l);
+		subobject.right(r);	}
+	
+	public subobject Property<L> left {		export getValue() as left();	};
+		public subobject Property<R> right {
+		export getValue() as right();
+	};
+	
+}

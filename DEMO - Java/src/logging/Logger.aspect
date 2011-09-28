@@ -1,0 +1,34 @@
+package logging;
+import hrm.*;
+
+aspect Logger {
+	
+	pointcut demoStart(int i) : call(void hrm.Demo.start(int)) && arguments(i);
+		
+	before_(int i) : demoStart(i) {
+		System.out.println("-- Demo started: running test number " + i);
+	}
+	
+	pointcut reassignException() : typeHandler(PersonAlreadyAssignedException)
+								&& if(AspectConfiguration.ENABLE_EXCEPTION);
+	
+	void around_() : reassignException() {
+		System.err.println("-- Already assigned!");
+	}
+	
+	pointcut automaticReassign(Person p, Team t) : call(void hrm.Team.addPerson(Person)) 
+												&& arguments(p) && targetType(t) && if(p.hasTeam())
+												&& if (AspectConfiguration.ENABLE_REASSIGN); 
+	
+	before_(Person p, Team t) : automaticReassign(p, t) {
+		System.out.println("Person " + p.getName() + " is already in team " + p.getTeam().getName() + ", not team " + t.getName() + "! Removing him...");
+		p.getTeam().removePerson(p);
+	}
+	
+	pointcut castOverflow(int i) : cast(short) && arguments(i) && if (i > Short.MAX_VALUE) && if(AspectConfiguration.ENABLE_OVERFLOW);
+	
+	short around_(int i) : castOverflow(i) {
+		System.out.println("-- Short would overflow: setting integer " + i + ". Setting to max value instead.");
+		return proceed(Short.MAX_VALUE);
+	}
+}

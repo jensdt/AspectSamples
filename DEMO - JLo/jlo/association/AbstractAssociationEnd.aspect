@@ -1,0 +1,119 @@
+package jlo.association;
+
+import java.util.List;
+import java.util.Set;
+import java.util.HashSet;
+
+public abstract class AbstractAssociationEnd<FROM, TO> implements BidiAssociationEnd<FROM,TO> {
+	
+	public AbstractAssociationEnd(FROM object) {
+		_object = object;
+	}	 
+    public boolean contains(BidiAssociationEnd<? extends TO,? super FROM> association) {
+      return getOtherAssociations().contains(association);
+    } 
+     
+    public boolean equals(Object other) {
+      return other == this;
+    }
+ 
+  protected void checkLock() {
+  	checkLock(this);
+  }
+      
+  protected void checkLock(BidiAssociationEnd<?,?> association) {
+    if(association != null && association.isLocked()) {
+  	  throw new IllegalArgumentException("Trying to modify locked reference. Locked object: "+association.object().getClass().getName());
+    }
+  }
+  
+  public abstract boolean registered(List<BidiAssociationEnd<? extends TO,? super FROM>> oldConnections, BidiAssociationEnd<? extends TO,? super FROM> registered);
+  
+  public abstract boolean unregistered(List<BidiAssociationEnd<? extends TO,? super FROM>> oldConnections, BidiAssociationEnd<? extends TO,? super FROM> unregistered);
+  
+	public FROM object() {
+	  return _object;
+	}
+	
+	private final FROM _object;
+	 
+  private boolean _locked = false;
+
+  public void lock() {
+  	_locked=true;
+  }
+
+  public void unlock() {
+  	_locked=false;
+  }
+
+  public boolean isLocked() {
+  	return _locked;
+  } 
+
+  public void addListener(AssociationListener<? super TO> listener) {
+  	if(listener == null) {
+  		throw new IllegalArgumentException("An association listener cannot be null.");
+  	}
+  	if(_listeners == null) {
+  		_listeners = new HashSet<AssociationListener<? super TO>>();
+  	}
+  	_listeners.add(listener);
+  }
+ 
+  public void removeListener(AssociationListener<? super TO> listener) {
+  	if(_listeners != null) {
+  		_listeners.remove(listener);
+  		// clean up if there are no listeners anymore.
+  		if(_listeners.isEmpty()) {
+  			_listeners = null;
+  		}
+  	}
+  }
+
+  public Set<AssociationListener<? super TO>> listeners() {
+  	return new HashSet<AssociationListener<? super TO>>(_listeners);
+  }
+  
+  private Set<AssociationListener<? super TO>> _listeners;
+  
+  protected void fireElementAdded(TO addedElement) {
+  	if(! _eventsBlocked && _listeners != null) {
+  		for(AssociationListener<? super TO> listener: _listeners) {
+  			listener.notifyElementAdded(addedElement);
+  		}
+  	}
+  }
+
+  protected void fireElementRemoved(TO addedElement) {
+  	if(! _eventsBlocked && _listeners != null) {
+  		for(AssociationListener<? super TO> listener: _listeners) {
+  			listener.notifyElementRemoved(addedElement);
+  		}
+  	}
+  }
+
+  protected void fireElementReplaced(TO oldElement, TO newElement) {
+  	if(! _eventsBlocked && _listeners != null) {
+  		for(AssociationListener<? super TO> listener: _listeners) {
+  			listener.notifyElementReplaced(oldElement, newElement);
+  		}
+  	}
+  }
+  
+  private boolean _eventsBlocked;
+
+  protected void disableEvents() {
+  	_eventsBlocked = true;
+  }
+
+  protected void enableEvents() {
+  	_eventsBlocked = false;
+  }
+  
+  protected boolean eventsBlocked() {
+  	return _eventsBlocked;
+  }
+
+  public abstract void clear();
+} 

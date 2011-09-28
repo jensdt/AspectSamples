@@ -1,0 +1,47 @@
+package hrm;
+import logging.*;
+
+public class Demo {
+	public static void main(String[] args) {
+		int no = 1;
+		if (args.length == 4) {
+			no = Integer.parseInt(args[0]);
+			AspectConfiguration.ENABLE_EXCEPTION = args[1].equals("1");
+			AspectConfiguration.ENABLE_REASSIGN = args[2].equals("1");
+			AspectConfiguration.ENABLE_OVERFLOW = args[3].equals("1");
+		}
+		
+		Demo demo = new Demo();
+		demo.start(no);
+	}
+	
+	public Demo() {
+	
+	}
+	
+	public void start(int no) {
+		if (no == 0) {
+			Person jan = new Person("Jan");
+			Person paul = new Person("Paul");
+			
+			Team teamA = new Team("Team A");
+			Team teamB = new Team("Team B");
+			
+			try {
+				teamA.addPerson(jan);
+				teamB.addPerson(jan);	
+			} catch (PersonAlreadyAssignedException e) {
+				e.printStackTrace();
+			}
+			
+			System.out.println("Jan is a member of: " + jan.getTeam().getName());
+		}
+		
+		if (no == 1) {		
+			int i = 50000;
+			System.out.println("Casting integer " + i + " to short");
+			short s = (short) i;
+			System.out.println("Short s is: " + s);
+		}
+	}
+}

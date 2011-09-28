@@ -1,0 +1,31 @@
+package example.cityroad;
+
+import jlo.association.WiredSingleAssociationEnd;
+import jlo.association.Property;
+
+public class Road {	
+	public Road(Double length) {
+	    subobject.length(length);		subobject.start(this);
+		subobject.end(this);	}
+	
+	public Road(Double length, City first, City second) {
+	    subobject.length(length);
+		subobject.start(this);
+		subobject.end(this);
+		setStart(first);
+		setEnd(second);
+	}
+
+	public subobject Property<Double> length {		export getValue() as length(); 	};
+	
+	public subobject WiredSingleAssociationEnd<Road,City> start {
+	    connect otherEnd to outgoing;
+		export connect(City) as setStart(City),
+		       getOtherEnd() as start();
+	};
+		public subobject WiredSingleAssociationEnd<Road,City> end {
+	    connect otherEnd to incoming;
+		export connect(City) as setEnd(City),
+		       getOtherEnd() as end();
+	};
+}

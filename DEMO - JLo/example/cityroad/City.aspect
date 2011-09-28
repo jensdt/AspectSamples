@@ -1,0 +1,53 @@
+package example.cityroad;
+ 
+import jlo.association.WiredMultiAssociationEnd;
+import jlo.graph.WeightedDigraphNode;
+import jlo.association.TransitiveAssociationEnd;
+import jlo.association.Property;
+import jlo.graph.WeightedTransitiveAssociationEnd;
+
+public class City {
+	
+	public City(String myName) {
+		subobject.inhabitants(new Integer(50000));
+		subobject.name(myName); 
+		subobject.outgoing(this);
+		subobject.incoming(this);
+		subobject.graph(this); 
+		subobject.cityTocityOne(this);
+		subobject.cityTocityTwo(this);
+	}
+	
+	public subobject Property<Integer> inhabitants {
+		export getValue() as numberOfInhabitants();
+	} 
+
+	public subobject Property<String> name {
+		export getValue() as name();	};
+	
+	public String toString() {		return name();	}
+	
+	public subobject WiredMultiAssociationEnd<City,Road> outgoing {
+	    connect otherEnd to start;
+		export add(Road) as addRouteTo(Road);
+	};
+	
+	public subobject WiredMultiAssociationEnd<City,Road> incoming {
+	    connect otherEnd to end;
+		export add(Road) as addRouteFrom(Road);
+	};
+	
+	public subobject WeightedTransitiveAssociationEnd<City,Road> cityTocityOne {		connect first to outgoing;
+		connect second to end;
+		connect weight to length;
+	};
+	
+	public subobject WeightedTransitiveAssociationEnd<City,Road> cityTocityTwo {		connect first to incoming;
+		connect second to start;
+		connect weight to length;	};
+	
+	public subobject WeightedDigraphNode<City,Road> graph {
+	    connect connections to [cityTocityOne,cityTocityTwo];		export predecessorOf(City) as canReach(City),
+		       successors() as reachables(),
+		       shortestDistanceTo(City) as distanceTo(City);	};	
+}

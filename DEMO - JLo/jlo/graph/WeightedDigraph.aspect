@@ -1,0 +1,69 @@
+package jlo.graph;
+
+import java.util.TreeSet;
+import java.util.Set;
+import java.util.List;
+import java.util.HashSet;
+import jlo.tuple.Pair;
+import java.util.PriorityQueue;
+
+/**
+ * @param V the vertices (nodes) of the graph
+ */
+public class WeightedDigraphNode<V,E> extends WiredDigraphNode<V> {	
+	connector connections V -> [WeightedAssociationEnd<V,E>];
+	
+	public WeightedDigraphNode(V v) {		super(v);	}
+
+	public double shortestDistanceTo(V v) {
+	   Set<V> done = new HashSet<V>();
+	   PriorityQueue<MyPair<V>> distances = new PriorityQueue<MyPair<V>>();
+	   MyPair<V> uPair = new MyPair<V>(0d,object());
+	   while(uPair!=null) {
+	    V u = uPair.right();
+	    if(u.equals(v)) {
+	      return uPair.left();
+	    }
+	    if(! done.contains(u)) {	     done.add(u);
+	     double distance = uPair.left();
+	     List<? extends WeightedAssociationEnd<V,E>> as = #connections(u);
+	     for(WeightedAssociationEnd<V,E> a: as) {	      List<E> edges = a.edges();
+	      for(E edge: edges) {
+	        V target = a.otherEnd(u,edge); 
+	        if(! done.contains(target)) {
+	  	     double newDistance = distance + (double)a.weight(edge);
+	         MyPair newPair = new MyPair(newDistance,target);
+	  	     distances.add(newPair);
+	        }
+	      }//for  
+	     }//for
+	   }//if	      uPair = distances.poll();
+	  }	  return -1d;	}
+	
+	private static class MyPair<T> implements Comparable<MyPair> {
+			public MyPair(double d, T v) {			_d=d;
+			_v=v;		}
+	
+	    public double left() {	    	return _d;
+	    }
+	    
+	    private double _d;
+	    
+	    public T right() {	    	return _v;	    }
+	    
+	    private T _v;
+	
+		public int hashCode() {
+		    return (int)_d;		}
+		
+		public boolean equals(Object other) {			if(other instanceof MyPair) {				return ((MyPair)other).left() == left(); 			} else {				return false;			}
+					}
+		
+		/**
+		 * Reverse the sort because we use a priority queue
+		 */
+		public int compareTo(MyPair other) {			double first = left();
+			double second = other.left();
+			if(first<second) {				return -1;			} else if (first == second) {				return 0;			} else {				return 1;
+			}		}	}
+	}

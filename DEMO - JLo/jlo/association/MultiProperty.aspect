@@ -1,0 +1,75 @@
+package jlo.association;
+
+import java.util.List;
+import java.util.ArrayList;
+
+/**
+ * A MultiProperty is an object that keeps references to a collection of other objects.
+ */
+public class MultiProperty<T extends Object> implements AssociationEnd<T>{	
+        
+  /**
+   * Create a new empty multiproperty. The created multiproperty is frugal.
+   *
+   * @post size() == 0;
+   */
+  public MultiProperty() {
+  }
+
+  /**
+   * Create a new empty multiproperty with the given setting for the frugalness.
+   *
+   * @post size() == 0;
+   * @post isFrugal() == frugal;
+   */
+  public MultiProperty(boolean frugal) {
+    _frugal = frugal;
+  }
+
+  private boolean _frugal;
+ 
+  /**
+   * Check whether this multiproperty is frugal. A frugal multiproperty removes its
+   * internal collection whenever it becomes empty. If this happens alot, it may be better
+   * to disabled frugalness.
+   */
+  public boolean isFrugal() {  	return _frugal;  }
+ 
+  private List<T> _value;
+  
+  /**
+   * Add the given value to this multiproperty.
+   *
+   * @param value The value to be added.
+   * @post getObjects().contains(value);
+   * @throws IllegalArgumentException: ! isValidValue(value); 
+   */
+  public synchronized void add(T value) {
+    if(isValid(value)) {      if(_value == null) {
+    	_value = new ArrayList<T>();      }
+      _value.add(value);
+    } else {    	throw new IllegalArgumentException();    }
+  }
+  
+  /**
+   * Check whether the given value is valid for this multiproperty.
+   *
+   * By default, any non-null value is allowed.
+   */
+  public boolean isValid(T value) {  	return value != null;  }
+  
+  /**
+   * Remove the given value from this multiproperty.
+   */
+  public synchronized void remove(T value) {    if(_value != null) {
+      _value.remove(value);
+      if(_frugal && _value.isEmpty()) {      	_value = null;      }
+    }
+  }
+  
+  public synchronized List<T> getObjects() {
+    if(_value != null) {  	  return new ArrayList<T>(_value);     } else {      return new ArrayList<T>();
+    }
+  }
+
+}

@@ -1,0 +1,19 @@
+package jlo.graph;
+
+import jlo.association.TransitiveAssociationEnd;
+import jlo.association.SingleAssociationEnd;
+import jlo.association.AssociationEnd;
+
+public abstract class WeightedTransitiveAssociationEnd<V,E>  
+       extends TransitiveAssociationEnd<V,E,V> implements WeightedAssociationEnd<V,E> {   
+   connector first V->AssociationEnd<E>;
+   connector second E -> SingleAssociationEnd<V>;
+   connector weight E -> SingleAssociationEnd<Double>; 
+   
+   public WeightedTransitiveAssociationEnd(V object) {   	 super(object);   }
+   
+   public V otherEnd(V from,E middle) {   	 return #second(middle).getOtherEnd();
+   }
+   
+   public Double weight(E edge) {   	return #weight(edge).getOtherEnd();
+   }}
